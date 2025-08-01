@@ -1,4 +1,3 @@
-import { User } from "@clerk/express";
 import { Inngest } from "inngest";
 
 // Create a client to send and receive events
