@@ -1,15 +1,14 @@
 {
-  "name": "server",
+  "name": "quickshow-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "Backend API for QuickShow deployed on Vercel",
+  "main": "api/index.js",
   "type": "module",
   "scripts": {
-    "server": "nodemon server.js",
-    "start": "node server.js"
+    "dev": "vercel dev"
   },
   "keywords": [],
-  "author": "",
+  "author": "Your Name",
   "license": "ISC",
   "dependencies": {
     "@clerk/express": "^1.7.15",
@@ -22,6 +21,6 @@
     "mongoose": "^8.17.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "vercel": "^31.4.0"
   }
 }
