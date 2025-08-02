@@ -1,32 +1,13 @@
 import mongoose from 'mongoose';
 
-let isConnected = false;
+const connectToDB = async () => {
+    try {
+        await mongoose.connect(`mongodb+srv://sirhillary:sirhillary15@cluster0.rn44mg1.mongodb.net/`)
+        console.log('MongoDB connected successfully!');
+    } catch (error) {
+        console.error("Database connection failed!", error);
+        process.exit(1);
+    }
+}
 
-const connectDB = async () => {
-  if (isConnected) {
-    // Use cached connection
-    return;
-  }
-
-  try {
-    mongoose.connection.on('connected', () =>
-      console.log('✅ MongoDB connected')
-    );
-
-    mongoose.connection.on('error', (err) =>
-      console.error('❌ MongoDB connection error:', err)
-    );
-
-    await mongoose.connect(`${process.env.MONGO_URI}/quickshow`, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    isConnected = true;
-  } catch (error) {
-    console.error('❌ MongoDB connection failed:', error.message);
-    throw new Error('Database connection failed');
-  }
-};
-
-export default connectDB;
+export default connectToDB;
