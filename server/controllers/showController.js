@@ -16,7 +16,7 @@ export const getNowPlayingMovies = async (req, res) => {
 
     const movies = data.results;
     res.json({
-      sucess: true,
+      success: true,
       movies: movies,
     });
   } catch (error) {
@@ -48,10 +48,10 @@ https://api.themoviedb.org/3/movie/${movieId}`,
           headers: { Authorization: `Bearer ${process.env.TMDB_API_KEY}` },
         }),
       ]);
-       const movieApiData = movieDetailsResponse.data;
-    const movieCreditsData = movieCreditsResponse.data;
+      const movieApiData = movieDetailsResponse.data;
+      const movieCreditsData = movieCreditsResponse.data;
 
-    const movieDetails = {
+      const movieDetails = {
         _id: movieId,
         title: movieApiData.title,
         overview: movieApiData.overview,
@@ -64,28 +64,28 @@ https://api.themoviedb.org/3/movie/${movieId}`,
         tagline: movieApiData.tagline || "",
         vote_average: movieApiData.vote_average,
         runtime: movieApiData.runtime,
-    };
+      };
 
       // Save the movie to the database
-      movie = await Movie.create(movieDetails)
+      movie = await Movie.create(movieDetails);
     }
 
-    const showToCreate= [];
-    showsInput.forEach(show => {
-        const showDate = show.date;
-        show.time.forEach((time)=> {
-            const dateTimeString = `${showDate}T${time}`;
-            showToCreate.push({
-                movie: movieId,
-                showDateTime: new Date(dateTimeString),
-                showPrice,
-                occupiedSeats: {}
-            })
-        })
+    const showToCreate = [];
+    showsInput.forEach((show) => {
+      const showDate = show.date;
+      show.time.forEach((time) => {
+        const dateTimeString = `${showDate}T${time}`;
+        showToCreate.push({
+          movie: movieId,
+          showDateTime: new Date(dateTimeString),
+          showPrice,
+          occupiedSeats: {},
+        });
+      });
     });
 
-    if(showToCreate.length > 0 ){
-        await Show.insertMany(showToCreate)
+    if (showToCreate.length > 0) {
+      await Show.insertMany(showToCreate);
     }
 
     res.status(201).json({
@@ -93,12 +93,72 @@ https://api.themoviedb.org/3/movie/${movieId}`,
       message: "Show added successfully",
       movie,
     });
-
   } catch (error) {
     console.error("Error adding show:", error);
     res.status(500).json({
       success: false,
       message: "Failed to add show",
+    });
+  }
+};
+
+//API to get all shows from the database
+export const getShows = async (req, res) => {
+  try {
+    const shows = await Show.find({ showDateTime: {$gte: new Date()}})
+      .populate("movie")
+      .sort({ showDateTime: 1 });
+
+      console.log(shows.length)
+
+      //filter unique shows
+
+      const uniqueShows = new Set(shows.map(show => show.movie))
+
+      res.json({
+        success: true,
+        shows: Array.from(uniqueShows)
+      })
+  } catch (error) {
+    console.error(error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getShow = async (req, res) => {
+  try {
+    const { movieId } = req.params;
+
+    //get all upcoming shows for the movie
+
+    const shows = await Show.find({movie: movieId, showDateTime: {$gte: new Date()}})
+
+    const movie = await Movie.findById(movieId)
+    const dateTime = {};
+
+
+    shows.forEach((show)=>{
+      const date = show.showDateTime.toISOString().split('T')[0];
+      if(!dateTime[date]){
+        dateTime[date] = []
+      }
+
+      dateTime[date].push({time: show.showDateTime, showId: show._id})
+    })
+
+    res.json({
+      success: true,
+      movie,
+      dateTime
+    })
+  } catch (error) {
+    console.error("Error fetching show:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch show",
     });
   }
 };
