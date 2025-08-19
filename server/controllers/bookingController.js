@@ -3,8 +3,8 @@
 
 //Function to check tha availability of selected seats for a movie
 
-import Booking from "../Models/Booking.js";
-import Show from "../Models/Show.js"
+import Booking from "../models/Booking.js";
+import Show from "../models/Show.js"
 import stripe from 'stripe'
 
 const checkSeatAvailability = async (showId, selectedSeats) => {

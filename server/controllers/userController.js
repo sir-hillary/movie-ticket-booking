@@ -4,8 +4,8 @@
 //API Controller function to get user bookings
 
 import { clerkClient } from "@clerk/express";
-import Movie from "../Models/Movie.js";
-import Booking from "../Models/Booking.js";
+import Movie from "../models/Movie.js";
+import Booking from "../models/Booking.js";
 
 export const getUserBookings = async (req, res) => {
     try {

@@ -1,6 +1,6 @@
 import axios from "axios";
-import Movie from "../Models/Movie.js";
-import Show from "../Models/Show.js";
+import Movie from "../models/Movie.js";
+import Show from "../models/Show.js";
 
 //API to get now playing movies
 export const getNowPlayingMovies = async (req, res) => {

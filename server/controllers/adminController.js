@@ -2,8 +2,8 @@
 
 //API to check if user is admin
 
-import Booking from "../Models/Booking.js"
-import Show from "../Models/Show.js";
+import Booking from "../models/Booking.js"
+import Show from "../models/Show.js";
 import User from "../models/User.js";
 
 //API to check if the user is admin
