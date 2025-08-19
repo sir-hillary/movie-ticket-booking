@@ -38,8 +38,7 @@ export const addShow = async (req, res) => {
       //fetch movie details and credits from the TMDB API
       const [movieDetailsResponse, movieCreditsResponse] = await Promise.all([
         axios.get(
-          `
-https://api.themoviedb.org/3/movie/${movieId}`,
+          `https://api.themoviedb.org/3/movie/${movieId}`,
           {
             headers: { Authorization: `Bearer ${process.env.TMDB_API_KEY}` },
           }
@@ -105,20 +104,20 @@ https://api.themoviedb.org/3/movie/${movieId}`,
 //API to get all shows from the database
 export const getShows = async (req, res) => {
   try {
-    const shows = await Show.find({ showDateTime: {$gte: new Date()}})
+    const shows = await Show.find({ showDateTime: { $gte: new Date() } })
       .populate("movie")
       .sort({ showDateTime: 1 });
 
-      console.log(shows.length)
+    console.log(shows.length);
 
-      //filter unique shows
+    //filter unique shows
 
-      const uniqueShows = new Set(shows.map(show => show.movie))
+    const uniqueShows = new Set(shows.map((show) => show.movie));
 
-      res.json({
-        success: true,
-        shows: Array.from(uniqueShows)
-      })
+    res.json({
+      success: true,
+      shows: Array.from(uniqueShows),
+    });
   } catch (error) {
     console.error(error);
     res.json({
@@ -134,26 +133,28 @@ export const getShow = async (req, res) => {
 
     //get all upcoming shows for the movie
 
-    const shows = await Show.find({movie: movieId, showDateTime: {$gte: new Date()}})
+    const shows = await Show.find({
+      movie: movieId,
+      showDateTime: { $gte: new Date() },
+    });
 
-    const movie = await Movie.findById(movieId)
+    const movie = await Movie.findById(movieId);
     const dateTime = {};
 
-
-    shows.forEach((show)=>{
-      const date = show.showDateTime.toISOString().split('T')[0];
-      if(!dateTime[date]){
-        dateTime[date] = []
+    shows.forEach((show) => {
+      const date = show.showDateTime.toISOString().split("T")[0];
+      if (!dateTime[date]) {
+        dateTime[date] = [];
       }
 
-      dateTime[date].push({time: show.showDateTime, showId: show._id})
-    })
+      dateTime[date].push({ time: show.showDateTime, showId: show._id });
+    });
 
     res.json({
       success: true,
       movie,
-      dateTime
-    })
+      dateTime,
+    });
   } catch (error) {
     console.error("Error fetching show:", error);
     res.status(500).json({
