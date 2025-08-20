@@ -10,12 +10,18 @@ import showRouter from "./routes/showRoute.js";
 import bookingRouter from "./routes/bookingRoute.js";
 import adminRouter from "./routes/adminRoutes.js";
 import userRouter from "./routes/userRoutes.js";
+import { stripeWebhooks } from "./controllers/stripeWebhook.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Connect to MongoDB
 await connectDB();
+
+
+//Stripe webhooks route
+
+app.use('/api/stripe', express.raw({type: 'application/json'}), stripeWebhooks)
 
 // Middleware
 app.use(cors());
